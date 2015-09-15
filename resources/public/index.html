@@ -5,9 +5,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="bootstrap.min.css"/>
   </head>
+
   <body class="container">
-    <h1>Hello W</h1>
+    <header>
+      <center>
+        <h1>Home</h1>
+      </center>
+      <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/question">Questions</a></li>
+      </ul>
+    </header>
+
+    {% block content %}
+
+    {% endblock %}
+
+    <footer>
+      <center>
+        <p>Cingcay</p>
+      </center>
+    </footer>
+
     <div id="app"></div>
+
     <script src="js/compiled/app.js"></script>
     <script>pissaz.core.init();</script>
   </body>

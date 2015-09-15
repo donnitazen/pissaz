@@ -23,7 +23,7 @@
   (let [shuffled (map-indexed #(conj %2 %1) (shuffle (question :answers)))
         true-answer ((first (filterv second shuffled)) 2)]
       {:problem (:problem question)
-       :answer-choices (map first shuffled)
+       :answer-choices (mapv #(assoc {} :idx (last %) :string (first %)) shuffled)
        :answer-index true-answer}))
         
 

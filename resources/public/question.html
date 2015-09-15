@@ -1,0 +1,24 @@
+{% extends "public/index.html" %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-4">
+            <h3>Soal No Sekian</h3><br/>
+            {{ problem }}
+
+            <form action="/answer-check" method="post">
+                <fieldset>
+                    <input type="hidden" name="intl" value="{{answer-index}}"/>
+
+                    {% for answer-choice in answer-choices %}
+                        <input type="radio" name="1" value="{{answer-choice.idx}}"/> {{ answer-choice.string }}
+                        <br/>
+                    {% endfor %}
+
+                    <input type="submit" value="submit"/>
+
+                </fieldset>
+            </form>
+        </div>
+    </div>
+{% endblock %}
