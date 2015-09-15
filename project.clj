@@ -1,9 +1,14 @@
 (defproject pissaz "0.1.0-SNAPSHOT"
-  :dependencies [[org.clojure/clojure "1.6.0"]
+  :dependencies [[org.clojure/clojure "1.7.0"]
                  [org.clojure/clojurescript "0.0-3211"]
                  [reagent "0.5.0"]
                  [re-frame "0.4.1"]
-                 [secretary "1.2.3"]]
+                 [secretary "1.2.3"]
+                 [lib-noir "0.9.9"]
+                 [ring "1.4.0"]
+                 [ring/ring-defaults "0.1.5"]
+                 [http-kit "2.1.18"]
+                 [selmer "0.9.1"]]
 
   :source-paths ["src/clj"]
 
