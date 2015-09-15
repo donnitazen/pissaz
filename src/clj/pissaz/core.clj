@@ -2,18 +2,23 @@
   (:require
     [org.httpkit.server :as http]
     [clojure.string :as cs]
-    [ring.middleware.defaults :as defaults]
+    [noir.cookies :as cookies]
+    [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
     [pissaz.routes :refer [all-routes]]))
 
-(def app
-  (-> all-routes
-      (defaults/wrap-defaults defaults/site-defaults)))
+
 
 (defonce server (atom nil))
 
 (defn start
-  []
-  (reset! server (http/run-server app {:port 3000})))
+  ([] (start 3000))
+  ([port] (reset! server
+                  (-> all-routes
+                      (cookies/wrap-noir-cookies*)
+                      (wrap-defaults (update-in site-defaults
+                                                [:security :anti-forgery]
+                                                #(not %)))
+                      (http/run-server {:port port})))))
 
 (defn stop
   []

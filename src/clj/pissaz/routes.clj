@@ -1,9 +1,18 @@
 (ns pissaz.routes
   (:require
-    [compojure.core :refer [defroutes routes GET POST]]
-    [compojure.route :as route]))
+    [compojure.core :refer [routes GET POST context]]
+    [compojure.route :refer [not-found resources]]
+    [selmer.parser :refer [render-file]]))
+
+(selmer.parser/cache-off!)
+
+(defn home-page
+  []
+  (render-file "public/index.html" {}))
 
 (def all-routes
   (routes
-    (GET "/" [] "Hello World")
-    (route/not-found "Not Found and dumbfounded")))
+    (context "/" req
+             (GET "/" req (home-page)))
+    (resources "public/")
+    (not-found "not found")))

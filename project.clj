@@ -8,7 +8,10 @@
                  [ring "1.4.0"]
                  [ring/ring-defaults "0.1.5"]
                  [http-kit "2.1.18"]
-                 [selmer "0.9.1"]]
+                 [selmer "0.9.1"]
+                 [com.ashafa/clutch "0.4.0"]
+                 [cljs-ajax "0.3.14"]
+                 ]
 
   :source-paths ["src/clj"]
 
@@ -16,7 +19,9 @@
             [lein-figwheel "0.3.3" :exclusions [cider/cider-nrepl]]  ]
 
   :clean-targets ^{:protect false} ["resources/public/js/compiled" "target"  ]
-  
+
+  :resource-paths ["resources"]
+
   :cljsbuild {:builds [{:id "dev"
                         :source-paths ["src/cljs"]
 
