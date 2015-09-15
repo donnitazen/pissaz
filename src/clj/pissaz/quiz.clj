@@ -16,8 +16,16 @@
         indexed-choices (into [] (map-indexed #(conj [%2] %1) shuffled))]
     {:problem (question :problem)
      :answer-choices shuffled
-     :answer-index (second (first (filter #(= true-answer (first %)) indexed-choices)))
-     }))
+     :answer-index (second (first (filter #(= true-answer (first %)) indexed-choices)))}))
+   
+(defn show-question'
+  [question]
+  (let [shuffled (map-indexed #(conj %2 %1) (shuffle (question :answers)))
+        true-answer ((filterv second shuffled) 2)]
+      {:problem (:problem question)
+       :answer-choices (map first shuffled)
+       :answer-index true-answer}))
+        
 
 ; Function to check the rightful answer
 
