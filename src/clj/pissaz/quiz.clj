@@ -9,7 +9,7 @@
 
 ; Function to show the question
 
-(defn show-question
+(defn show-question'
   [question]
   (let [shuffled (shuffle (mapv first (question :answers)))
         true-answer (first (first (filter #(true? (second %)) (question :answers))))
@@ -18,10 +18,10 @@
      :answer-choices shuffled
      :answer-index (second (first (filter #(= true-answer (first %)) indexed-choices)))}))
    
-(defn show-question'
+(defn show-question
   [question]
   (let [shuffled (map-indexed #(conj %2 %1) (shuffle (question :answers)))
-        true-answer ((filterv second shuffled) 2)]
+        true-answer ((first (filterv second shuffled)) 2)]
       {:problem (:problem question)
        :answer-choices (map first shuffled)
        :answer-index true-answer}))
