@@ -4,7 +4,7 @@
     [compojure.route :refer [not-found resources]]
     [selmer.parser :refer [render-file]]
     [pissaz.pages :as page]
-    [pissaz.quiz :refer [show-question answer-check question1]]))
+    [pissaz.quiz :refer [question1]]))
 
 (selmer.parser/cache-off!)
 
@@ -17,7 +17,7 @@
     (GET "/quizzes" req (page/quizzes))
     (GET "/quiz/:id" req (page/quiz (get-in req [:params :id])))
     (GET "/question" req
-      (page/question (show-question question1)))
+      (page/question question1))
     (POST "/answer-check" req (str (req :params)))
     (resources "public/")
     (not-found "not found")))

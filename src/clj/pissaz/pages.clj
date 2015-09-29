@@ -87,14 +87,15 @@
 
 (defn question
   "to show question"
-  [a-question]
-  (hp/html5 (head "Question 1")
-            (body [:div {:class "row"}
-                   [:div {:class "col-md-4"}
-                    [:h3 "question no sekian"]
-                    [:form {:action "/answer-check" :method "post"}
-                     [:label (a-question :problem)]
-                     [:fieldset
-                      [:input {:type "hidden" :name "intel" :value (a-question :answer-index)}]
-                      (map answer-choice-to-html (a-question :answer-choices))]
-                     [:button {:type "submit" :class "btn btn-success"} "Next"]]]])))
+  [the-question]
+  (let [a-question (quiz/show-question the-question)]
+    (hp/html5 (head "Question 1")
+             (body [:div {:class "row"}
+                    [:div {:class "col-md-4"}
+                     [:h3 "question no sekian"]
+                     [:form {:action "/answer-check" :method "post"}
+                      [:label (a-question :problem)]
+                      [:fieldset
+                       [:input {:type "hidden" :name "intel" :value (a-question :answer-index)}]
+                       (map answer-choice-to-html (a-question :answer-choices))]
+                      [:button {:type "submit" :class "btn btn-success"} "Next"]]]]))))
