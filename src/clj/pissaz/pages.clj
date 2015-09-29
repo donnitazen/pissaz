@@ -99,8 +99,7 @@
                        (map question-list all-questions)]]
                      [:div {:class "col-md-10"}
                       [:h3 "All Quizzes Broh"]
-                      [:button {:type "submit" :class "btn btn-success"}
-                       "Add a quiz"]
+                      (quiz-form)
                       [:br]]]))))
 
 (defn question
@@ -119,3 +118,21 @@
                        [:input {:type "hidden" :name "intel" :value (a-question :answer-index)}]
                        (map answer-choice-to-html (a-question :answer-choices))]
                       [:button {:type "submit" :class "btn btn-success"} "Next"]]]]))))
+
+
+
+(defn quiz-form
+  []
+  [:div {:class "col-md-6"}
+   [:h2 "Add a Question"]
+   [:form {:role "form" :action "/add-question" :method "post"}
+    [:div {:class "form-group"}
+     [:label {:for "problem"} "Problem: "]
+     [:input {:name "problem" :type "text" :class "form-control" :placeholder "What is your name?"}]]
+    [:div {:class "form-group"}
+     [:label {:for "true-answers"} "True answer choices: "]
+     [:input {:name "true-answers" :type "text" :class "form-control" :placeholder "Example of true choices: ['Tania' 'Johanna']"}]]
+    [:div {:class "form-group"}
+     [:label {:for "false-answers"} "False answer choices: "]
+     [:input {:name "false-answers" :type "text" :class "form-control" :placeholder "Example of false choices: ['Toby' 'Bruce' 'James']"}]]
+    [:button {:type "submit" :class "btn btn-success"} "Add a question"]]])

@@ -25,3 +25,15 @@
   (= user-choice-idx answer-index))
 
 ; Function to add a question
+
+(defn add-question
+  [q-map]
+  (let [all-questions (read-question-file "question.edn")
+        true-answers (mapv #(vector % true) (read-string (q-map :true-answers)))
+        false-answers (mapv #(vector % false) (read-string (q-map :false-answers)))
+        q-id (str (inc (read-string ((last all-questions) :question-id))))
+        new-answers (vec (concat true-answers false-answers))
+        question-with-answers (merge q-map {:question-id q-id :answers new-answers})
+        new-question (dissoc question-with-answers :true-answers :false-answers)]
+    (spit "resources/data/question.edn" (conj all-questions new-question))
+    q-id))
