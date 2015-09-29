@@ -25,7 +25,8 @@
 (defn -main
   "Main entry to the application"
   [& args]
-  (start))
+  (start)
+  (println "Pissaz is up and running well!"))
 
 (defn reset
   []
