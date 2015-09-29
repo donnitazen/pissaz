@@ -85,6 +85,7 @@
   [a-choice]
   [:input {:type "radio" :name "1" :value (a-choice :idx)} (a-choice :string)])
 
+(declare quiz-form)
 
 (defn questions
   "to show all questions (samples)"

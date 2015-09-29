@@ -5,8 +5,6 @@
     [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
     [pissaz.routes :refer [all-routes]]))
 
-
-
 (defonce server (atom nil))
 
 (defn start
@@ -23,6 +21,11 @@
   []
   (@server)
   (reset! server nil))
+
+(defn -main
+  "Main entry to the application"
+  [& args]
+  (start))
 
 (defn reset
   []

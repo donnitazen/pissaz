@@ -10,13 +10,14 @@
                  [http-kit "2.1.18"]
                  [selmer "0.9.1"]
                  [com.ashafa/clutch "0.4.0"]
-                 [cljs-ajax "0.3.14"]
-                 ]
+                 [cljs-ajax "0.3.14"]]
 
   :source-paths ["src/clj"]
 
   :plugins [[lein-cljsbuild "1.0.6"]
             [lein-figwheel "0.3.3" :exclusions [cider/cider-nrepl]]  ]
+
+  :main pissaz.core
 
   :clean-targets ^{:protect false} ["resources/public/js/compiled" "target"  ]
 
