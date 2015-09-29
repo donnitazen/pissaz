@@ -22,7 +22,7 @@
     [:li {:role "presentation"}
      [:a {:href "/quizzes"} "Quizzes"]]
     [:li {:role "presentation"}
-     [:a {:href "/question/1"} "Question 1 Sample"]]]])
+     [:a {:href "/questions"} "Questions"]]]])
 
 (defn- footer
   []
@@ -85,14 +85,34 @@
   [a-choice]
   [:input {:type "radio" :name "1" :value (a-choice :idx)} (a-choice :string)])
 
+
+(defn questions
+  "to show all questions (samples)"
+  []
+  (let [all-questions (quiz/read-question-file "question.edn")
+        question-list (fn [que] (hc/html [:li {:role "presentation"}
+                                          [:a {:href (str "/question/" (que :question-id))} (str "Question nomor " (que :question-id))]]))]
+    (hp/html5 (head "Pissaz All Questions")
+              (body [:div {:class "row"}
+                     [:div {:class "col-md-2"}
+                      [:ul {:class "nav nav-pills nav-stacked"}
+                       (map question-list all-questions)]]
+                     [:div {:class "col-md-10"}
+                      [:h3 "All Quizzes Broh"]
+                      [:button {:type "submit" :class "btn btn-success"}
+                       "Add a quiz"]
+                      [:br]]]))))
+
 (defn question
-  "to show question"
-  [the-question]
-  (let [a-question (quiz/show-question the-question)]
-    (hp/html5 (head "Question 1")
-             (body [:div {:class "row"}
+  "to show question (sample)"
+  [question-id]
+  (let [question-from-edn (first (filterv #(= question-id (% :question-id)) (quiz/read-question-file "question.edn")))
+        a-question (quiz/show-question question-from-edn)]
+    (hp/html5 (head (str "Question" (question-from-edn :question-id)))
+             (body
+               [:div {:class "row"}
                     [:div {:class "col-md-4"}
-                     [:h3 "question no sekian"]
+                     [:h3 (str "Question #" (question-from-edn :question-id))]
                      [:form {:action "/answer-check" :method "post"}
                       [:label (a-question :problem)]
                       [:fieldset
