@@ -1,7 +1,6 @@
 (ns pissaz.core
   (:require
     [org.httpkit.server :as http]
-    [clojure.string :as cs]
     [noir.cookies :as cookies]
     [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
     [pissaz.routes :refer [all-routes]]))
