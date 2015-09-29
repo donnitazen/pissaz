@@ -93,7 +93,7 @@
                    [:div {:class "col-md-4"}
                     [:h3 "question no sekian"]
                     [:form {:action "/answer-check" :method "post"}
-                     [:label (a-question :string)]
+                     [:label (a-question :problem)]
                      [:fieldset
                       [:input {:type "hidden" :name "intel" :value (a-question :answer-index)}]
                       (map answer-choice-to-html (a-question :answer-choices))]
