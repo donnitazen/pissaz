@@ -81,27 +81,33 @@
                       [:h2 "Belom ada"]]]))))
 
 
-(defn answer-choice-to-html
-  [a-choice]
-  [:input {:type "radio" :name "1" :value (a-choice :idx)} (a-choice :string)])
+(defn sa-or-ma-options
+  [a-choice type]
+  (cond
+    (= type "sa") (hc/html [:input {:type "radio" :name "1" :value (a-choice :idx)} (a-choice :string)]
+                           [:br])
+    (= type "ma") (hc/html [:input {:type "checkbox" :name "1" :value (a-choice :idx)} (a-choice :string)]
+                           [:br])))
 
 (declare quiz-form)
 
 (defn questions
   "to show all questions (samples)"
-  []
-  (let [all-questions (quiz/read-question-file "question.edn")
-        question-list (fn [que] (hc/html [:li {:role "presentation"}
-                                          [:a {:href (str "/question/" (que :question-id))} (str "Question nomor " (que :question-id))]]))]
-    (hp/html5 (head "Pissaz All Questions")
-              (body [:div {:class "row"}
-                     [:div {:class "col-md-2"}
-                      [:ul {:class "nav nav-pills nav-stacked"}
-                       (map question-list all-questions)]]
-                     [:div {:class "col-md-10"}
-                      [:h3 "All Quizzes Broh"]
-                      (quiz-form)
-                      [:br]]]))))
+  ([pesan]
+   (let [all-questions (quiz/read-question-file "question.edn")
+         question-list (fn [que] (hc/html [:li {:role "presentation"}
+                                           [:a {:href (str "/question/" (que :question-id))} (str "Question nomor " (que :question-id))]]))]
+     (hp/html5 (head "Pissaz All Questions")
+               (body [:div {:class "row"}
+                      [:div {:class "col-md-2"}
+                       [:ul {:class "nav nav-pills nav-stacked"}
+                        (map question-list all-questions)]]
+                      [:div {:class "col-md-10"}
+                       [:h1 pesan]
+                       [:h3 "All Quizzes Broh"]
+                       (quiz-form)
+                       [:br]]]))))
+  ([] (questions [""])))
 
 (defn question
   "to show question (sample)"
@@ -116,9 +122,10 @@
                      [:form {:action "/answer-check" :method "post"}
                       [:label (a-question :problem)]
                       [:fieldset
+                       [:input {:type "hidden" :name "type" :value (a-question :type)}]
                        [:input {:type "hidden" :name "q-id" :value (question-from-edn :question-id)}]
                        [:input {:type "hidden" :name "intel" :value (a-question :answer-index)}]
-                       (map answer-choice-to-html (a-question :answer-choices))]
+                       (map #(sa-or-ma-options % (a-question :type)) (a-question :answer-choices))]
                       [:button {:type "submit" :class "btn btn-success"} "Next"]]]]))))
 
 
