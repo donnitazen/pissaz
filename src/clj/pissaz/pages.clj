@@ -137,11 +137,11 @@
    [:form {:role "form" :action "/add-question" :method "post"}
     [:div {:class "form-group"}
      [:label {:for "problem"} "Problem: "]
-     [:input {:name "problem" :type "text" :class "form-control" :placeholder "Example of problem: 'What is your name?'"}]]
+     [:input {:name "problem" :type "text" :class "form-control" :placeholder "Example of problem: What is your name?"}]]
     [:div {:class "form-group"}
      [:label {:for "true-answers"} "True answer choices: "]
-     [:input {:name "true-answers" :type "text" :class "form-control" :placeholder "Example of true choices: ['Tania' 'Johanna']"}]]
+     [:input {:name "true-answers" :type "text" :class "form-control" :placeholder "Example of true choices: [\"Sharon\" \"Johanna\"]"}]]
     [:div {:class "form-group"}
      [:label {:for "false-answers"} "False answer choices: "]
-     [:input {:name "false-answers" :type "text" :class "form-control" :placeholder "Example of false choices: ['Toby' 'Bruce' 'James']"}]]
+     [:input {:name "false-answers" :type "text" :class "form-control" :placeholder "Example of false choices: [\"Toby\" \"K-CI\" \"Tata\"]"}]]
     [:button {:type "submit" :class "btn btn-success"} "Add a question"]]])
