@@ -116,6 +116,7 @@
                      [:form {:action "/answer-check" :method "post"}
                       [:label (a-question :problem)]
                       [:fieldset
+                       [:input {:type "hidden" :name "q-id" :value (question-from-edn :question-id)}]
                        [:input {:type "hidden" :name "intel" :value (a-question :answer-index)}]
                        (map answer-choice-to-html (a-question :answer-choices))]
                       [:button {:type "submit" :class "btn btn-success"} "Next"]]]]))))
@@ -129,7 +130,7 @@
    [:form {:role "form" :action "/add-question" :method "post"}
     [:div {:class "form-group"}
      [:label {:for "problem"} "Problem: "]
-     [:input {:name "problem" :type "text" :class "form-control" :placeholder "What is your name?"}]]
+     [:input {:name "problem" :type "text" :class "form-control" :placeholder "Example of problem: 'What is your name?'"}]]
     [:div {:class "form-group"}
      [:label {:for "true-answers"} "True answer choices: "]
      [:input {:name "true-answers" :type "text" :class "form-control" :placeholder "Example of true choices: ['Tania' 'Johanna']"}]]

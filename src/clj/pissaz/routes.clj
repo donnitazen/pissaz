@@ -20,7 +20,12 @@
     (GET "/questions" req (page/questions))
     (GET "/question/:id" req
       (page/question (get-in req [:params :id])))
-    (POST "/answer-check" req (str (req :params)))
+    (POST "/answer-check" req (let [q-id (get-in req [:params :q-id])
+                                    check (quiz/answer-check (get-in req [:params "1"])
+                                                             (get-in req [:params :intel]))]
+                                (if check
+                                  (resp/redirect (str "/question/" (str (inc (read-string q-id)))))
+                                  (resp/redirect (str "/question/" q-id)))))
     (POST "/add-question" req (let [new-id (quiz/add-question (req :params))]
                                 (resp/redirect (str "/question/" new-id))))
     (resources "public/")
