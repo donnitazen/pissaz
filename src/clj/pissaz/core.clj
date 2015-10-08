@@ -2,6 +2,7 @@
   (:require
     [org.httpkit.server :as http]
     [noir.cookies :as cookies]
+    [noir.session :as session]
     [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
     [pissaz.routes :refer [all-routes]]))
 
@@ -12,6 +13,8 @@
   ([port] (reset! server
                   (-> all-routes
                       (cookies/wrap-noir-cookies*)
+                      (session/wrap-noir-session)
+                      (session/wrap-noir-flash)
                       (wrap-defaults (update-in site-defaults
                                                 [:security :anti-forgery]
                                                 #(not %)))

@@ -5,18 +5,32 @@
     [selmer.parser :refer [render-file]]
     [pissaz.pages :as page]
     [pissaz.quiz :as quiz]
-    [noir.response :as resp]))
+    [pissaz.users :as users]
+    [noir.response :as resp]
+    [noir.session :as session]))
 
 (selmer.parser/cache-off!)
 
-
+(defn signed-in?
+  []
+  (session/get :username))
 
 (def all-routes
   (routes
    (GET "/" req
-        (page/homepage))
+     (page/homepage))
    (GET "/contact" req
         (page/contact))
+   (GET "/sign-in" req
+      (page/sign-in))
+   (GET "/sign-up" req
+     (page/sign-up))
+   (POST "/add-user" req
+     (do (session/put! :username (users/add-user (req :params)))
+         (resp/redirect "/questions")))
+   (GET "/sign-out" req
+     (do (session/clear!)
+         (page/homepage)))
    (GET "/quizzes" req
         (page/quizzes))
    (GET "/quiz/:id" req

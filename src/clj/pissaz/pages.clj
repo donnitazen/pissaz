@@ -2,7 +2,10 @@
   (:require
     [hiccup.core :as hc]
     [hiccup.page :as hp]
-    [pissaz.quiz :as quiz]))
+    [pissaz.quiz :as quiz]
+    [pissaz.users :as user]
+    [noir.session :as session]))
+
 
 (defn- head
   [title]
@@ -13,6 +16,20 @@
    [:link {:rel "stylesheet" :href "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css"}]
    [:link {:rel "stylesheet" :href "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"}]])
 
+(defn- user-data
+  []
+  (if (not= (session/get :username) nil)
+    [:ul {:class "nav nav-pills navbar-right"}
+     [:li {:role "presentation"} (str "Hello, " (session/get :username))]
+     [:li {:role "presentation"}
+      [:a {:href "/sign-out"} "Sign Out"]]]
+    [:ul {:class "nav nav-pills navbar-right"}
+     [:li {:role "Sign In"}
+      [:a [:href "/sign-in"] "Sign In"]]
+     [:li {:role "presentation"}
+      [:a {:href "/sign-up"} "Sign Out"]]]))
+
+
 (defn- header
   []
   [:header
@@ -22,7 +39,9 @@
     [:li {:role "presentation"}
      [:a {:href "/quizzes"} "Quizzes"]]
     [:li {:role "presentation"}
-     [:a {:href "/questions"} "Questions"]]]])
+     [:a {:href "/questions"} "Questions"]]
+    user-data]])
+
 
 (defn- footer
   []
@@ -145,3 +164,27 @@
      [:label {:for "false-answers"} "False answer choices: "]
      [:input {:name "false-answers" :type "text" :class "form-control" :placeholder "Example of false choices: [\"Toby\" \"K-CI\" \"Tata\"]"}]]
     [:button {:type "submit" :class "btn btn-success"} "Add a question"]]])
+
+(defn sign-up
+  []
+  (hp/html5 (head "Pissaz - Sign Up")
+            (body [:div {:class "row"}
+                   [:h3 "Sign Up"]
+                   [:div {:class "col-md-6"}
+                    [:form {:action "/add-user" :method "post"}
+                     [:div {:class "form-group"}
+                      [:label {:for "username"} "Username: "]
+                      [:input {:name "username" :type "text" :class "form-control" :placeholder "Enter a username"}]]
+                     [:div {:class "form-group"}
+                      [:label {:for "email"} "Email: "]
+                      [:input {:name "email" :type "text" :class "form-control" :placeholder "Enter your email"}]]
+                     [:div {:class "form-group"}
+                      [:label {:for "password"} "Password: "]
+                      [:input {:name "password" :type "text" :class "form-control" :placeholder "Enter your password"}]]
+                     [:div {:class "form-group"}
+                      [:label {:for "password-confirmation"} "Repeat Password: "]
+                      [:input {:name "password-confirmation" :type "text" :class "form-control" :placeholder "Repeat your password"}]]
+                     [:button {:type "submit" :class "btn btn-success"} "Register your account"]]]])))
+
+(defn sign-in
+  [])
