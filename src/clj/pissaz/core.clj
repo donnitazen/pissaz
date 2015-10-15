@@ -4,14 +4,14 @@
     [noir.cookies :as cookies]
     [noir.session :as session]
     [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
-    [pissaz.routes :refer [all-routes]]))
+    [pissaz.routes :refer [all-routes-x]]))
 
 (defonce server (atom nil))
 
 (defn start
   ([] (start 3000))
   ([port] (reset! server
-                  (-> all-routes
+                  (-> all-routes-x
                       (cookies/wrap-noir-cookies*)
                       (session/wrap-noir-session)
                       (session/wrap-noir-flash)

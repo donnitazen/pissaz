@@ -3,8 +3,7 @@
     [hiccup.core :as hc]
     [hiccup.page :as hp]
     [pissaz.quiz :as quiz]
-    [pissaz.users :as user]
-    [noir.session :as session]))
+    [pissaz.users :as user]))
 
 
 (defn- head
@@ -16,31 +15,37 @@
    [:link {:rel "stylesheet" :href "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css"}]
    [:link {:rel "stylesheet" :href "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"}]])
 
-(defn- user-data
-  []
-  (if (not= (session/get :username) nil)
-    [:ul {:class "nav nav-pills navbar-right"}
-     [:li {:role "presentation"} (str "Hello, " (session/get :username))]
-     [:li {:role "presentation"}
-      [:a {:href "/sign-out"} "Sign Out"]]]
-    [:ul {:class "nav nav-pills navbar-right"}
-     [:li {:role "Sign In"}
-      [:a [:href "/sign-in"] "Sign In"]]
-     [:li {:role "presentation"}
-      [:a {:href "/sign-up"} "Sign Out"]]]))
 
 
 (defn- header
-  []
-  [:header
-   [:ul {:class "nav nav-pills"}
-    [:li {:role "presentation"}
-     [:a {:href "/"} "Pissaz"]]
-    [:li {:role "presentation"}
-     [:a {:href "/quizzes"} "Quizzes"]]
-    [:li {:role "presentation"}
-     [:a {:href "/questions"} "Questions"]]
-    user-data]])
+  ([user]
+   [:header
+    [:ul {:class "nav nav-pills"}
+     [:li {:role "presentation"}
+      [:a {:href "/"} "Pissaz"]]
+     [:li {:role "presentation"}
+      [:a {:href "/quizzes"} "Quizzes"]]
+     [:li {:role "presentation"}
+      [:a {:href "/questions"} "Questions"]]]
+    [:ul {:class "nav nav-pills navbar-right"}
+     [:li {:role "Hello User"}
+      [:a {:href "/profile"} (str "Hello, " user)]]
+     [:li {:role "presentation"}
+      [:a {:href "/sign-out"} "Sign Out"]]]])
+  ([]
+   [:header
+    [:ul {:class "nav nav-pills"}
+     [:li {:role "presentation"}
+      [:a {:href "/"} "Pissaz"]]
+     [:li {:role "presentation"}
+      [:a {:href "/quizzes"} "Quizzes"]]
+     [:li {:role "presentation"}
+      [:a {:href "/questions"} "Questions"]]]
+    [:ul {:class "nav nav-pills navbar-right"}
+     [:li {:role "Sign In"}
+      [:a {:href "/sign-in"} "Sign In"]]
+     [:li {:role "presentation"}
+      [:a {:href "/sign-up"} "Sign Up"]]]]))
 
 
 (defn- footer
@@ -50,21 +55,39 @@
     [:a {:href "/contact"} "Contact Me"]]])
 
 (defn- body
-  [anything]
-  [:body {:class "container"}
-   [:div {:class "row"}
-    (header)]
-   anything
-   [:div {:class "row"}
-    (footer)]])
+  ([user anything]
+   [:body {:class "container"}
+    [:div {:class "row"}
+     (header user)]
+    anything
+    [:div {:class "row"}
+     (footer)]])
+  ([anything]
+   [:body {:class "container"}
+    [:div {:class "row"}
+     (header)]
+    anything
+    [:div {:class "row"}
+     (footer)]]))
 
 (defn homepage
-  []
-  (hp/html5 (head "Pissaz - Home")
-            (body [:div {:class "row"}
-                   [:div {:class "jumbotron"}
-                    [:h1 "Jumbo Pic"]]
-                   [:p "bla bla bla about Pissaz"]])))
+  ([user]
+   (hp/html5 (head "Pissaz - Home")
+             (body user [:div {:class "row"}
+                          [:div {:class "jumbotron"}
+                           [:h1 "Jumbo Pic"]]
+                           [:p "bla bla bla about Pissaz"]])))
+  ([]
+   (hp/html5 (head "Pissaz - Home")
+             (body [:div {:class "row"}
+                         [:div {:class "jumbotron"}
+                          [:h1 "Jumbo Pic"]]
+                         [:p "bla bla bla about Pissaz"]]))))
+
+(defn profile
+  [user]
+  (hp/html5 (head (str "Profile" user))
+            (body user [:p "My profile"])))
 
 (defn contact
   []
@@ -73,9 +96,10 @@
                    [:p "Call me"]])))
 
 (defn quizzes
-  []
+  [user]
   (hp/html5 (head "Pissaz All Quizzes")
-            (body [:div {:class "row"}
+            (body user
+                  [:div {:class "row"}
                    [:div {:class "col-md-2"}
                     [:ul {:class "nav nav-pills nav-stacked"}
                      [:li {:role "presentation"}
@@ -87,11 +111,12 @@
                     [:br]]])))
 
 (defn quiz
-  [id]
+  [user id]
   "Sementara quiz 1 dulu lah yah"
   (let [the-quiz id]
     (hp/html5 (head (str "Quiz #" id))
-              (body [:div {:class "row"}
+              (body user
+                    [:div {:class "row"}
                      [:div {:class "col-md-2"}
                       [:ul {:class "nav nav-pills nav-stacked"}
                        [:li {:role "presentation"}
@@ -112,12 +137,12 @@
 
 (defn questions
   "to show all questions (samples)"
-  ([pesan]
+  ([user pesan]
    (let [all-questions (quiz/read-question-file "question.edn")
          question-list (fn [que] (hc/html [:li {:role "presentation"}
                                            [:a {:href (str "/question/" (que :question-id))} (str "Question nomor " (que :question-id))]]))]
      (hp/html5 (head "Pissaz All Questions")
-               (body [:div {:class "row"}
+               (body user [:div {:class "row"}
                       [:div {:class "col-md-2"}
                        [:ul {:class "nav nav-pills nav-stacked"}
                         (map question-list all-questions)]]
@@ -126,15 +151,15 @@
                        [:h3 "All Quizzes Broh"]
                        (quiz-form)
                        [:br]]]))))
-  ([] (questions [""])))
+  ([user ] (questions user [""])))
 
 (defn question
   "to show question (sample)"
-  [question-id]
+  [user question-id]
   (let [question-from-edn (first (filterv #(= question-id (% :question-id)) (quiz/read-question-file "question.edn")))
         a-question (quiz/show-question question-from-edn)]
     (hp/html5 (head (str "Question" (question-from-edn :question-id)))
-             (body
+             (body user
                [:div {:class "row"}
                     [:div {:class "col-md-4"}
                      [:h3 (str "Question #" (question-from-edn :question-id))]
@@ -187,4 +212,16 @@
                      [:button {:type "submit" :class "btn btn-success"} "Register your account"]]]])))
 
 (defn sign-in
-  [])
+  []
+  (hp/html5 (head "Pissaz - Sign In")
+            (body [:div {:class "row"}
+                   [:h3 "Sign In"]
+                   [:div {:class "col-md-6"}
+                    [:form {:action "/add-session" :method "post"}
+                     [:div {:class "form-group"}
+                      [:label {:for "username"} "Username: "]
+                      [:input {:name "username" :type "text" :class "form-control" :placeholder "Enter username"}]]
+                     [:div {:class "form-group"}
+                      [:label {:for "password"} "Password: "]
+                      [:input {:name "password" :type "text" :class "form-control" :placeholder "password here"}]]
+                     [:button {:type "submit" :class "btn btn-success"} "Sign In"]]]])))

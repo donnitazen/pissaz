@@ -7,58 +7,84 @@
     [pissaz.quiz :as quiz]
     [pissaz.users :as users]
     [noir.response :as resp]
-    [noir.session :as session]))
+    [noir.session :as session]
+    [pissaz.users :as user]))
 
 (selmer.parser/cache-off!)
 
-(defn signed-in?
-  []
-  (session/get :username))
 
-(def all-routes
+(def all-routes-x
   (routes
-   (GET "/" req
-     (page/homepage))
-   (GET "/contact" req
-        (page/contact))
-   (GET "/sign-in" req
+    (GET "/" req
+      (let [user (session/get :username)]
+        (if user
+          (page/homepage user)
+          (page/homepage))))
+    (GET "/sign-out" req
+      (do (session/clear!)
+          (page/homepage)))
+    (GET "/sign-in" req
       (page/sign-in))
-   (GET "/sign-up" req
-     (page/sign-up))
-   (POST "/add-user" req
-     (do (session/put! :username (users/add-user (req :params)))
-         (resp/redirect "/questions")))
-   (GET "/sign-out" req
-     (do (session/clear!)
-         (page/homepage)))
-   (GET "/quizzes" req
-        (page/quizzes))
-   (GET "/quiz/:id" req
-        (page/quiz (get-in req [:params :id])))
-   (GET "/questions" req
-        (page/questions))
-   (GET "/questions/last" req
-        (page/questions "Good job on the last question!"))
-   (GET "/question/:id" req
-        (page/question (get-in req [:params :id])))
-   (POST "/answer-check2" req
-         (str (req :params)))
-   (POST "/answer-check" req
-         (let [q-id (get-in req [:params :q-id])
-               check (quiz/answer-check (get-in req [:params :type])
-                                        (get-in req [:params "1"])
-                                        (get-in req [:params :intel]))]
-           (if check
-             (if (quiz/last-question? q-id)
-               (resp/redirect "/questions/last")
-               (resp/redirect (str "/question/" (str (inc (read-string q-id))))))
-             (resp/redirect (str "/question/" q-id)))))
-   (POST "/add-question" req
-         (let [new-id (quiz/add-question (req :params))]
-           (resp/redirect (str "/question/" new-id))))
-   (GET "/numpang/:something" req
-        (str (map #(str "</hr>" %) req)))
-   (resources "public/")
-   (not-found "not found")))
-
-
+    (POST "/add-session" req
+      (let [username (get-in req [:params :username])
+            pass (get-in req [:params :password])]
+        (if (users/registered? username pass)
+          (do (session/put! :username username)
+              (resp/redirect "/"))
+          (resp/redirect "/sign-in"))))
+    (GET "/profile" req
+      (let [user (session/get :username)]
+        (if user
+          (page/profile user)
+          (resp/redirect "/sign-in"))))
+    (GET "/sign-up" req
+      (page/sign-up))
+    (POST "/add-user" req
+      (let [user-data (req :params)]
+        (if (users/sign-up-validated? user-data)
+          (do (session/put! :username (user/add-user user-data))
+              (resp/redirect "/"))
+          (resp/redirect "/sign-up"))))
+    (GET "/quizzes" req
+      (let [user (session/get :username)]
+        (if user
+          (page/quizzes user)
+          (page/sign-in))))
+    (GET "/quiz/:id" req
+      (let [user (session/get :username)]
+        (if user
+          (page/quiz user (get-in req [:params :id]))
+          (page/sign-in))))
+    (GET "/questions" req
+      (let [user (session/get :username)]
+        (if user
+          (page/questions user)
+          (page/sign-in))))
+    (GET "/questions/last" req
+      (let [user (session/get :username)]
+        (if user
+          (page/questions user "Good job on the last question!"))))
+    (GET "/question/:id" req
+      (let [user (session/get :username)]
+        (if user
+          (page/question user (get-in req [:params :id]))
+          (page/sign-in))))
+    (POST "/answer-check" req
+      (let [q-id (get-in req [:params :q-id])
+            check (quiz/answer-check (get-in req [:params :type])
+                                     (get-in req [:params "1"])
+                                     (get-in req [:params :intel]))]
+        (if check
+          (if (quiz/last-question? q-id)
+            (resp/redirect "/questions/last")
+            (resp/redirect (str "/question/" (str (inc (read-string q-id))))))
+          (resp/redirect (str "/question/" q-id)))))
+    (POST "/add-question" req
+      (let [user? (session/get :username)
+            admin? (user/admin? user?)
+            new-id (quiz/add-question (req :params))]
+        (if admin?
+          (resp/redirect (str "/question/" new-id))
+          (resp/redirect "/quizzes"))))
+    (resources "public/")
+    (not-found "not-found")))
