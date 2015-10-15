@@ -81,10 +81,9 @@
           (resp/redirect (str "/question/" q-id)))))
     (POST "/add-question" req
       (let [user? (session/get :username)
-            admin? (user/admin? user?)
-            new-id (quiz/add-question (req :params))]
+            admin? (user/admin? user?)]
         (if admin?
-          (resp/redirect (str "/question/" new-id))
+          (resp/redirect (str "/question/" (quiz/add-question (req :params))))
           (resp/redirect "/quizzes"))))
     (resources "public/")
     (not-found "not-found")))
