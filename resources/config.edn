@@ -1,4 +1,5 @@
 {:port 3000
- :db {:question-db "question.edn"
-      :user-db "user.edn"
-      :quiz-db "quiz.edn"}}
+ :db {:question-db "resources/data/question.edn"
+      :user-db "resources/data/user.edn"
+      :quiz-db "resources/data/quiz.edn"}
+ :public-directory "/public"}

@@ -1,33 +1,30 @@
 (ns pissaz.users)
 
-(defn read-user-file
-  []
-  (read-string (slurp (str "resources/data/" "user.edn"))))
 
 (defn add-user
-  [data]
-  (let [current-user-id (str (inc (count (read-user-file))))
+  [data user-database]
+  (let [current-user-id (str (inc (count user-database)))
         new-user (assoc data :user-id current-user-id)]
-    (do (spit "resources/data/user.edn" (conj (read-user-file) new-user))
+    (do (spit "resources/data/user.edn" (conj user-database new-user))
         (new-user :username))))
 
 
 (defn registered?
-  [username password]
+  [username password user-database]
   (let [username-check #(get % :username)
         password-check #(get % :password)]
     (first (filter #(and (= username (username-check %))
                    (= password (password-check %)))
-             (read-user-file)))))
+             user-database))))
 
 (defn all-data-filled?
   [a-map]
   (every? #(not= % "") (vals a-map)))
 
 (defn username-and-email-new?
-  [a-map]
-  (let [usernames (map #(% :username) (read-user-file))
-        emails (map #(% :email) (read-user-file))]
+  [a-map user-database]
+  (let [usernames (map #(% :username) user-database)
+        emails (map #(% :email) user-database)]
     (and (not-any? #(= % (a-map :username)) usernames)
         (not-any? #(= % (a-map :email)) emails))))
 
@@ -36,14 +33,14 @@
   (= (a-map :password) (a-map :password-confirmation)))
 
 (defn sign-up-validated?
-  [a-map]
+  [a-map user-database]
   (and (all-data-filled? a-map)
-       (username-and-email-new? a-map)
+       (username-and-email-new? a-map user-database)
        (password-matched? a-map)))
 
 (defn admin?
-  [username]
-  (->> (filter #(= username (% :username)) (read-user-file))
+  [username user-database]
+  (->> (filter #(= username (% :username)) user-database)
        (first)
        (#(= (% :role) "admin"))))
 

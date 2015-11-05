@@ -9,12 +9,14 @@
   (stop [this]
     this))
 
-(defn create [quiz question user]
-  (map->Database {:question-db (slurping-file question)
-                  :quiz-db (slurping-file quiz)
-                  :user-db (slurping-file user)}))
+(defn reading-file
+  [path-to-file]
+  (read-string (slurp path-to-file)))
+
+(defn create
+  [quiz question user]
+  (map->Database {:question-db (reading-file question)
+                  :quiz-db (reading-file quiz)
+                  :user-db (reading-file user)}))
 
 
-(defn slurping-file
-  [filename]
-  (slurp (str "resources/data/" filename)))

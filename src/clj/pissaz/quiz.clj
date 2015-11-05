@@ -32,8 +32,8 @@
 ; Function to add a question
 
 (defn add-question
-  [q-map]
-  (let [all-questions (read-question-file "question.edn")
+  [q-map question-database]
+  (let [all-questions question-database
         true-answers (mapv #(vector % true) (read-string (q-map :true-answers)))
         false-answers (mapv #(vector % false) (read-string (q-map :false-answers)))
         q-id (str (inc (read-string ((last all-questions) :question-id))))
@@ -46,8 +46,8 @@
 ; Function to move to the next question
 
 (defn last-question?
-  [q-id]
-  (= q-id ((last (read-question-file "question.edn")) :question-id)))
+  [q-id question-database]
+  (= q-id ((last question-database) :question-id)))
 
 ; Take 1 question with certain question-ids
 

@@ -96,11 +96,10 @@
                    [:p "Call me"]])))
 
 (defn quizzes
-  [user]
-  (let [all-quizzes (quiz/read-question-file "quiz.edn")
-        quizzes-as-link (map #(hc/html [:li {:role "presentation"}
+  [user quiz-database]
+  (let [quizzes-as-link (map #(hc/html [:li {:role "presentation"}
                                         [:a {:href (str "/quiz/" (% :quiz_id))} (str "Quiz " %2)]])
-                             all-quizzes (rest (range)))]
+                             quiz-database (rest (range)))]
     (hp/html5 (head "Pissaz All Quizzes")
               (body user
                     [:div {:class "row"}
@@ -114,8 +113,8 @@
                       [:br]]]))))
 
 (defn quiz
-  ([user quiz_id question_id]
-   (let [all-quizzes (quiz/read-question-file "quiz.edn")
+  ([user quiz_id question_id quiz-database]
+   (let [all-quizzes quiz-database
          the-quiz (first (filterv #(= quiz_id (% :quiz_id)) all-quizzes))
          listing-questions (quiz/get-multiple-questions (the-quiz :question_ids))
          map-questions (map #(hc/html [:li {:role "presentation"}
@@ -129,8 +128,8 @@
                         map-questions]]
                       [:div {:class "col-md-10"}
                        [:h2 (str "Quiz" (the-quiz :title))]]]))))
-  ([user quiz_id]
-    (quiz user quiz_id (first (listing-questions)))))
+  ([user quiz_id quiz-database]
+    (quiz user quiz_id (first quiz-database))))
 
 
 (defn sa-or-ma-options
@@ -147,8 +146,8 @@
 
 (defn questions
   "to show all questions (samples)"
-  ([user pesan]
-   (let [all-questions (quiz/read-question-file "question.edn")
+  ([user pesan question-database]
+   (let [all-questions question-database
          question-list (fn [que] (hc/html [:li {:role "presentation"}
                                            [:a {:href (str "/question/" (que :question-id))} (str "Question nomor " (que :question-id))]]))]
      (hp/html5 (head "Pissaz All Questions")
@@ -165,8 +164,8 @@
 
 (defn question
   "to show question (sample)"
-  [user question-id]
-  (let [question-from-edn (first (filterv #(= question-id (% :question-id)) (quiz/read-question-file "question.edn")))
+  [user question-id question-database]
+  (let [question-from-edn (first (filterv #(= question-id (% :question-id)) question-database))
         a-question (quiz/show-question question-from-edn)]
     (hp/html5 (head (str "Question" (question-from-edn :question-id)))
              (body user
