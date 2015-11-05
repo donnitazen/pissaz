@@ -30,7 +30,7 @@
   []
   (alter-var-root
     #'system
-    (component/start)))
+    component/start))
 
 (defn stop
   []

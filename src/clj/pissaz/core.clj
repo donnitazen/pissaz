@@ -4,7 +4,6 @@
     [noir.cookies :as cookies]
     [noir.session :as session]
     [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
-    [pissaz.routes :refer [all-routes]]
     [com.stuartsierra.component :as component]))
 
 (defrecord Server [routes port]
@@ -22,11 +21,6 @@
   (-> (map->Server {:port port})
       (component/using [:routes])))
 
-(defn -main
-  "Main entry to the application"
-  [& args]
-  (start)
-  (println "Pissaz is up and running well!"))
 
 
 ;;

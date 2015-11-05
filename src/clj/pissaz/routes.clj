@@ -18,7 +18,7 @@
   component/Lifecycle
   (start [this]
     (assoc this
-      :tabel (all-routes public-directory)))
+      :tabel (all-routes database public-directory)))
   (stop [this]
     this))
 
