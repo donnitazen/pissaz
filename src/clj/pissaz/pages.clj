@@ -97,32 +97,40 @@
 
 (defn quizzes
   [user]
-  (hp/html5 (head "Pissaz All Quizzes")
-            (body user
-                  [:div {:class "row"}
-                   [:div {:class "col-md-2"}
-                    [:ul {:class "nav nav-pills nav-stacked"}
-                     [:li {:role "presentation"}
-                      [:a {:href "/quiz/1"} "Quiz 1"]]]]
-                   [:div {:class "col-md-10"}
-                    [:h3 "All Quizzes Broh"]
-                    [:button {:type "submit" :class "btn btn-success"}
-                     "Add a quiz"]
-                    [:br]]])))
-
-(defn quiz
-  [user id]
-  "Sementara quiz 1 dulu lah yah"
-  (let [the-quiz id]
-    (hp/html5 (head (str "Quiz #" id))
+  (let [all-quizzes (quiz/read-question-file "quiz.edn")
+        quizzes-as-link (map #(hc/html [:li {:role "presentation"}
+                                        [:a {:href (str "/quiz/" (% :quiz_id))} (str "Quiz " %2)]])
+                             all-quizzes (rest (range)))]
+    (hp/html5 (head "Pissaz All Quizzes")
               (body user
                     [:div {:class "row"}
                      [:div {:class "col-md-2"}
                       [:ul {:class "nav nav-pills nav-stacked"}
-                       [:li {:role "presentation"}
-                        [:a {:href "quiz/1"}  "Quiz 1"]]]]
+                       quizzes-as-link]]
                      [:div {:class "col-md-10"}
-                      [:h2 "Belom ada"]]]))))
+                      [:h3 "All Quizzes Broh"]
+                      [:button {:type "submit" :class "btn btn-success"}
+                       "Add a quiz"]
+                      [:br]]]))))
+
+(defn quiz
+  ([user quiz_id question_id]
+   (let [all-quizzes (quiz/read-question-file "quiz.edn")
+         the-quiz (first (filterv #(= quiz_id (% :quiz_id)) all-quizzes))
+         listing-questions (quiz/get-multiple-questions (the-quiz :question_ids))
+         map-questions (map #(hc/html [:li {:role "presentation"}
+                                       [:a {:href (str "/quiz/question/" (% :question-id))} (str "Question " %2)]])
+                            listing-questions (rest (range)))]
+     (hp/html5 (head (str "Quiz" (the-quiz :title)))
+               (body user
+                     [:div {:class "row"}
+                      [:div {:class "col-md-2"}
+                       [:ul {:class "nav nav-pills nav-stacked"}
+                        map-questions]]
+                      [:div {:class "col-md-10"}
+                       [:h2 (str "Quiz" (the-quiz :title))]]]))))
+  ([user quiz_id]
+    (quiz user quiz_id (first (listing-questions)))))
 
 
 (defn sa-or-ma-options
@@ -132,6 +140,8 @@
                            [:br])
     (= type "ma") (hc/html [:input {:type "checkbox" :name "1" :value (a-choice :idx)} (a-choice :string)]
                            [:br])))
+
+
 
 (declare quiz-form)
 

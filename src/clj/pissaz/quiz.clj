@@ -48,3 +48,13 @@
 (defn last-question?
   [q-id]
   (= q-id ((last (read-question-file "question.edn")) :question-id)))
+
+; Take 1 question with certain question-ids
+
+(defn get-one-question
+  [question-id]
+  (first (filterv #(= question-id (% :question-id)) (read-question-file "question.edn"))))
+
+(defn get-multiple-questions
+  [question-ids]
+  (mapv #(get-one-question %) question-ids))

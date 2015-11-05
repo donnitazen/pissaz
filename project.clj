@@ -10,7 +10,8 @@
                  [http-kit "2.1.18"]
                  [selmer "0.9.1"]
                  [com.ashafa/clutch "0.4.0"]
-                 [cljs-ajax "0.3.14"]]
+                 [cljs-ajax "0.3.14"]
+                 [com.stuartsierra/component "0.3.0"]]
 
   :source-paths ["src/clj"]
 

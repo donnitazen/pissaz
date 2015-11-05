@@ -4,26 +4,23 @@
     [noir.cookies :as cookies]
     [noir.session :as session]
     [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
-    [pissaz.routes :refer [all-routes-x]]))
+    [pissaz.routes :refer [all-routes]]
+    [com.stuartsierra.component :as component]))
 
-(defonce server (atom nil))
+(defrecord Server [routes port]
+  component/Lifecycle
+  (start [this]
+    (let [app (wrap-defaults (:tabel routes) site-defaults)]
+      (assoc this
+        :stop-fn
+        (http/run-server app {:port port}))))
+  (stop [this]
+    ((:stop-fn this))
+    (dissoc this :stop-fn)))
 
-(defn start
-  ([] (start 3000))
-  ([port] (reset! server
-                  (-> all-routes-x
-                      (cookies/wrap-noir-cookies*)
-                      (session/wrap-noir-session)
-                      (session/wrap-noir-flash)
-                      (wrap-defaults (update-in site-defaults
-                                                [:security :anti-forgery]
-                                                #(not %)))
-                      (http/run-server {:port port})))))
-
-(defn stop
-  []
-  (@server)
-  (reset! server nil))
+(defn create [port]
+  (-> (map->Server {:port port})
+      (component/using [:routes])))
 
 (defn -main
   "Main entry to the application"
@@ -31,10 +28,6 @@
   (start)
   (println "Pissaz is up and running well!"))
 
-(defn reset
-  []
-  (stop)
-  (start))
 
 ;;
 

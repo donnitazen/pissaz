@@ -8,12 +8,26 @@
     [pissaz.users :as users]
     [noir.response :as resp]
     [noir.session :as session]
-    [pissaz.users :as user]))
+    [pissaz.users :as user]
+    [com.stuartsierra.component :as component]))
 
 (selmer.parser/cache-off!)
 
+(defrecord Routes []
+  component/Lifecycle
+  (start [this]
+    (assoc this
+      :tabel (all-routes)))
+  (stop [this]
+    this))
 
-(def all-routes-x
+(defn create
+  []
+  (component/using (map->Routes)))
+
+
+(defn- all-routes
+  []
   (routes
     (GET "/" req
       (let [user (session/get :username)]
@@ -64,10 +78,10 @@
       (let [user (session/get :username)]
         (if user
           (page/questions user "Good job on the last question!"))))
-    (GET "/question/:id" req
+    (GET "/quiz/:quiz_id/question/:id" req
       (let [user (session/get :username)]
         (if user
-          (page/question user (get-in req [:params :id]))
+          (page/quiz-question user (get-in req [:params :quiz_id]) (get-in req [:params :id]))
           (page/sign-in))))
     (POST "/answer-check" req
       (let [q-id (get-in req [:params :q-id])
